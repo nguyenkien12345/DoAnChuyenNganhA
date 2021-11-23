@@ -16,12 +16,7 @@ function Search() {
   let search = parseFloat(query.get("humidity"));
 
   const searchData = () => {
-    firebase
-      .database()
-      .ref()
-      .orderByChild("Humidity")
-      .equalTo(search)
-      .on("value", (snapshot) => {
+    firebase.database().ref().child("FirebaseIOT").orderByChild("Humidity").equalTo(search).on("value", (snapshot) => {
         if (snapshot.val()) {
           const data = snapshot.val();
           setData(data);
@@ -36,12 +31,13 @@ function Search() {
   return (
     <>
       {Object.keys(data).length === 0 ? (
-        <h2 className="text-center font-weight-bold">
+        <h2 className="text-center fw-bold fs-4 alert alert-danger shadow-sm p-3 bg-light rounded">
           NO SEARCH FOUND WITH THAT HUMIDITY: {query.get("humidity")}
         </h2>
       ) : (
-        <Table striped bordered hover>
-          <thead style={{ backgroundColor: "aqua" }}>
+        <Table striped bordered hover className="bg-light table align-middle table-responsive">
+          <caption>List Of Temperature And Humidity</caption>
+          <thead className="bg-warning">
             <tr>
               <th>STT</th>
               <th>Temperature</th>
@@ -65,9 +61,9 @@ function Search() {
           </tbody>
         </Table>
       )}
-      <div className="pt-5 w-100 text-center">
-        <Link to="/" className="mt-3" style={{display: "block"}}>
-          <Button className="w-100" variant="outline-primary">Go Home</Button>
+      <div className="mt-3 mb-1 w-100 text-center">
+        <Link to="/">
+          <Button className="w-100" variant="success fs-5 fw-bold">Go Home</Button>
         </Link>
       </div>
     </>

@@ -3,6 +3,8 @@ import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import firebase from '../../firebase/firebase';
+import Header from '../Header';
+import dateformat from 'dateformat';
 
 function Add() {
 
@@ -28,13 +30,16 @@ function Add() {
     const onHandleSubmit = (event) => {
         event.preventDefault();
         if(temperature === "" || temperature === null){
-            toast.error("Please Enter Your Temperature. Do not leave it blank");         
+            toast.error("Please Enter Your Temperature. Do not leave it blank");  
+            return;       
         }
         else if(humidity === "" || humidity === null){
-            toast.error("Please Enter Your Humidity. Do not leave it blank");         
+            toast.error("Please Enter Your Humidity. Do not leave it blank");   
+            return;       
         }
         else if(status === "" || status === null){
-            toast.error("Please Enter Your Status. Do not leave it blank");         
+            toast.error("Please Enter Your Status. Do not leave it blank");       
+            return;       
         }
         else {
             setLoading(true);
@@ -42,10 +47,10 @@ function Add() {
                 Temperature: parseFloat(temperature),
                 Humidity: parseFloat(humidity),
                 Status: status,
-                Date: new Date().toDateString(),
+                Date: dateformat(new Date(), 'yyyy-mm-dd'),
                 Time: new Date().toLocaleTimeString()
             }
-            firebase.database().ref().push(data, (err) => {
+            firebase.database().ref().child("FirebaseIOT").push(data, (err) => {
                 if(err) {
                     toast.error(err);
                 }
@@ -60,12 +65,13 @@ function Add() {
 
     return (
         <>
-            <Card>
+            <Header/>
+            <Card className="bg-light p-2 my-4">
                 <Card.Body>
-                    <h2 className='text-center mb-4'>CREATE NEW DATA</h2>
+                    <Card.Title className='text-center alert alert-dark fw-bolder mb-4 fs-3'>CREATE NEW DATA</Card.Title>
                     <Form onSubmit={onHandleSubmit}>
                         <Form.Group id='temperature' className="mb-3" as={Row}>
-                            <Form.Label column sm="2">Temperature</Form.Label>
+                            <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Temperature</Form.Label>
                             <Col sm="10">
                                 <Form.Control type='number' name="temperature"  
                                 value={temperature} onChange={handleChangeValue}/>
@@ -73,7 +79,7 @@ function Add() {
                         </Form.Group>
                         
                         <Form.Group id='humidity' className="mb-3" as={Row}>
-                            <Form.Label column sm="2">Humidity</Form.Label>
+                            <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Humidity</Form.Label>
                             <Col sm="10">
                                 <Form.Control type='number' name="humidity"  
                                 value={humidity} onChange={handleChangeValue}/>
@@ -81,15 +87,16 @@ function Add() {
                         </Form.Group>
 
                         <Form.Group id='status' className="mb-3" as={Row}>
-                            <Form.Label column sm="2">Status</Form.Label>
+                            <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Status</Form.Label>
                             <Col sm="10">
-                                <Form.Control type='text' name="status"  
-                                value={status} onChange={handleChangeValue}/>
+                                <select name="status"  value={status} onChange={handleChangeValue} className="w-100 h-100">
+                                <option>Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                </select>
                             </Col>
                         </Form.Group>
-                        <Button variant="success" disabled={loading} className='w-100 mt-3' type='submit'>
-                            SAVE
-                        </Button>
+                        <Button variant="success" disabled={loading} className='w-100 mt-3 mb-1 fs-5 fw-bold' type='submit'>SAVE</Button>
                     </Form>
                 </Card.Body>
             </Card>

@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
-import { Alert, Button, Card, Form, Row, Col } from "react-bootstrap";
+import { Alert, Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContextProvider";
+import Header from '../Header';
 
 function UpdateProfile() {
   
@@ -57,41 +58,39 @@ function UpdateProfile() {
 
   return (
     <>
-      <Card>
+      <Header/>
+      <Card className="bg-light p-2 my-4">
+        <Card.Img className="my-3" variant="top" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2OZBpsoyZf15IqL8qnln5oWAQDsIMPwP_rA&usqp=CAU" height="250px"/>
         <Card.Body>
-          <h2 className="text-center mb-4">Update Profile</h2>
+          <Card.Title className="text-center alert alert-dark fw-bolder mb-4 fs-3">Update Profile</Card.Title>
           {error && <Alert variant="danger">{error}</Alert>}
           {message && <Alert variant="success">{message}</Alert>}
           <Form onSubmit={handleSubmit}>
             <Form.Group id="email" className="mb-3" as={Row}>
-              <Form.Label column sm="2">Email</Form.Label>
+              <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Email</Form.Label>
               <Col sm="10">
                 <Form.Control type="email" ref={emailRef} required defaultValue={currentUser.email}/>
               </Col>
             </Form.Group>
 
             <Form.Group id="password" className="mb-3" as={Row}>
-              <Form.Label column sm="2">Password</Form.Label>
+              <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Password</Form.Label>
               <Col sm="10">
                 <Form.Control type="password" ref={passwordRef} placeholder="Leave blank to keep the same"/>
               </Col>
             </Form.Group>
 
             <Form.Group id="confirmPassword" className="mb-3" as={Row}>
-              <Form.Label column sm="2">Confirm Password</Form.Label>
+              <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Confirm Password</Form.Label>
               <Col sm="10">
                 <Form.Control type="password" ref={confirmPasswordRef} placeholder="Leave blank to keep the same"/>
               </Col>
             </Form.Group>
-            <Button disabled={loading} className="w-100 mt-3 mb-1" type="submit">
-              Update
-            </Button>
+            <Button disabled={loading} variant="success" className="w-100 mt-3 mb-1 fs-5 fw-bold" type="submit">Update</Button>
           </Form>
         </Card.Body>
       </Card>
-      <div className="w-100 text-center mt-2">
-        <Link to="/">Cancel</Link>
-      </div>
+      <div className="w-100 text-center mt-3 fs-5"><Link to="/">Cancel</Link></div>
     </>
   );
 }

@@ -3,6 +3,8 @@ import { Button, Form, Table } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import firebase from "../../firebase/firebase";
+import Header from '../Header';
+import dateformat from 'dateformat';
 
 function Home() {
   
@@ -16,10 +18,7 @@ function Home() {
   const [sort, setSort] = useState(false);
 
   useEffect(() => {
-    firebase
-      .database()
-      .ref()
-      .on("value", (snapshot) => {
+    firebase.database().ref().child("FirebaseIOT").on("value", (snapshot) => {
         if (snapshot.val() !== null) {
           setData({ ...snapshot.val() });
         } else {
@@ -39,11 +38,7 @@ function Home() {
 
   const handleSort = (e) => {
     setSort(true);
-    firebase
-      .database()
-      .ref()
-      .orderByChild(`${e.target.value}`)
-      .on("value", (snapshot) => {
+    firebase.database().ref().child("FirebaseIOT").orderByChild(`${e.target.value}`).on("value", (snapshot) => {
         let sortedData = [];
         snapshot.forEach((snap) => {
           sortedData.push(snap.val());
@@ -54,10 +49,7 @@ function Home() {
 
   const handleReset = () => {
       setSort(false);
-      firebase
-      .database()
-      .ref()
-      .on("value", (snapshot) => {
+      firebase.database().ref().child("FirebaseIOT").on("value", (snapshot) => {
         if (snapshot.val() !== null) {
           setData({ ...snapshot.val() });
         } else {
@@ -68,11 +60,7 @@ function Home() {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure that you want to delete that data?")) {
-      firebase
-        .database()
-        .ref()
-        .child(`${id}`)
-        .remove((err) => {
+      firebase.database().ref().child(`FirebaseIOT/${id}`).remove((err) => {
           if (err) {
             toast.error(err);
           } else {
@@ -83,12 +71,7 @@ function Home() {
   };
 
   const filterStatus = (value) => {
-    firebase
-      .database()
-      .ref()
-      .orderByChild("Status")
-      .equalTo(value)
-      .on("value", (snapshot) => {
+    firebase.database().ref().child("FirebaseIOT").orderByChild("Status").equalTo(value).on("value", (snapshot) => {
         if (snapshot.val()) {
           const data = snapshot.val();
           setData(data);
@@ -98,38 +81,24 @@ function Home() {
 
   return (
     <>
-      <Form onSubmit={handleSearch} className="mb-3">
+      <Header/>
+      <Form onSubmit={handleSearch} className="mt-4 mb-1">
         <Form.Group id="search">
-          <Form.Control
-            placeholder="Search"
-            type="search"
-            name="searchValue"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
+          <Form.Control placeholder="Search" type="text" name="searchValue" value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
         </Form.Group>
       </Form>
       <div className="mb-5 w-100">
-        <select
-          className="dropdown"
-          name="colValue"
-          style={{ display: "block", width: "100%" }}
-          onChange={handleSort}
-        >
-          <option className="text-center">---SORT BY---</option>
+        <select className="d-block w-100 rounded py-1 mb-1" name="colValue" onChange={handleSort}>
+          <option>SORT BY</option>
           <option value="Humidity">Humidity</option>
           <option value="Temperature">Temperature</option>
         </select>
-        <Button
-          variant="outline-warning"
-          onClick={handleReset}
-          className="w-100 mt-1"
-        >
-          Reset
-        </Button>
+        <Button variant="outline-primary" className="mb-1 w-100 fw-bolder fs-6" onClick={() => filterStatus("Active")}>Active</Button>
+        <Button variant="outline-secondary" className="mb-1 w-100 fw-bolder fs-6" onClick={() => filterStatus("Inactive")}>Inactive</Button>
+        <Button variant="outline-dark" className="w-100 fw-bolder fs-6" onClick={handleReset}>Reset</Button>
       </div>
-      <Table striped bordered hover>
-        <thead style={{ backgroundColor: "aqua" }}>
+      <Table striped bordered hover className="bg-light table align-middle">
+        <thead className="bg-warning">
           <tr>
             <th>STT</th>
             <th>Temperature</th>
@@ -148,7 +117,7 @@ function Home() {
                 <td>{data[id].Temperature}</td>
                 <td>{data[id].Humidity}</td>
                 <td>{data[id].Status}</td>
-                <td>{data[id].Date}</td>
+                <td>{dateformat(data[id].Date,'yyyy-mm-dd')}</td>
                 <td>{data[id].Time}</td>
                 <td>
                   <Link to={`/details/${id}`} className="me-2">
@@ -171,7 +140,7 @@ function Home() {
                   <td>{item.Temperature}</td>
                   <td>{item.Humidity}</td>
                   <td>{item.Status}</td>
-                  <td>{item.Date}</td>
+                  <td>{dateformat(item.Date, 'yyyy-mm-dd')}</td>
                   <td>{item.Time}</td>
                 </tr>
               );
@@ -179,10 +148,6 @@ function Home() {
           </tbody>
         )}
       </Table>
-      <div className="mb-5 w-100">
-        <Button variant="outline-primary" className="me-5" onClick={() => filterStatus("Active")}>Active</Button>
-        <Button variant="outline-secondary" onClick={() => filterStatus("Inactive")}>Inactive</Button>
-      </div>
     </>
   );
 }

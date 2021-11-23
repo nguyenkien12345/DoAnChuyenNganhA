@@ -12,7 +12,6 @@ import AuthContextProvider from "../contexts/AuthContextProvider";
 import PrivateRoute from "../privateRoute/PrivateRoute";
 import Add from "./Add";
 import Detail from "./Detail";
-import Header from "./Header";
 import Home from "./Home";
 import Profile from "./Profile";
 import Search from "./Search";
@@ -20,11 +19,8 @@ import Search from "./Search";
 function App() {
   return (
     <>
-      <Container>
-        <Header />
-      </Container>
-      <Container className="d-flex flex-column align-items-center justify-content-center">
-        <div className="w-100 text-center mt-5">
+      <Container className="d-flex flex-column align-items-center justify-content-center bg-info p-5 mt-4">
+        <div className="w-100 text-center">
           <AuthContextProvider>
             <ToastContainer position="top-center" />
             <Switch>

@@ -65,4 +65,3 @@ function AuthContextProvider({children}) {
 
 export { useAuthContext };
 export default AuthContextProvider;
-

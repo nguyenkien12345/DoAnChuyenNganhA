@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Alert, Button, Card } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { useAuthContext } from '../../contexts/AuthContextProvider';
+import Header from '../Header';
 
 function Profile() {
 
@@ -24,20 +25,18 @@ function Profile() {
 
     return (
         <>
-            <Card>
+            <Header/>
+            <Card className="bg-light p-2 my-4">
+                <Card.Img variant="top" src="https://cdn.dribbble.com/users/1577045/screenshots/4914645/media/028d394ffb00cb7a4b2ef9915a384fd9.png?compress=1&resize=400x300" height="250px" className="my-3"/>
                 <Card.Body>
-                    <h2 className='text-center mb-4'>Profile</h2>
+                    <Card.Title className='text-center alert alert-dark fs-3 fw-bolder mb-4'>Profile</Card.Title>
                     {error && <Alert variant='danger'>{error}</Alert>}
-                    <div className='mb-3'>
-                        <strong>Email:</strong> {currentUser.email}
-                    </div>
-                    <Link to='/update-profile' className='btn btn-primary w-100 mb-1'>
-                        Update Profile
-                    </Link>
+                    <Card.Text className='fs-5'><strong>Email:</strong> {currentUser.email}</Card.Text>
+                    <Link to='/update-profile' className='btn btn-success w-100 mb-1 mt-3 fs-5 fw-bold'>Update Profile</Link>
                 </Card.Body>
             </Card>
             <div className="w-100 text-center mt-2">
-                <Button variant="link" onClick={onHandleLogOut}>Log Out</Button>
+                <Button variant="link" onClick={onHandleLogOut} className="fs-5 mt-3">Log Out</Button>
             </div>
         </>
     )
