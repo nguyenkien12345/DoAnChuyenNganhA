@@ -12,8 +12,8 @@ function Home() {
 
   const [data, setData] = useState({});
 
-  const [searchValue, setSearchValue] = useState("");
-
+  const [searchHumidityValue, setSearchHumidityValue] = useState("");
+  const [searchTemperatureValue, setSearchTemperatureValue] = useState("");
   const [sortedData, setSortedData] = useState([]);
   const [sort, setSort] = useState(false);
 
@@ -30,10 +30,16 @@ function Home() {
     };
   }, []);
 
-  const handleSearch = (e) => {
+  const handleSearchHumidity = (e) => {
     e.preventDefault();
-    history.push(`/search?humidity=${searchValue}`);
-    setSearchValue("");
+    history.push(`/search?humidity=${searchHumidityValue}`);
+    setSearchHumidityValue("");
+  };
+
+  const handleSearchTemperature = (e) => {
+    e.preventDefault();
+    history.push(`/search?temperature=${searchTemperatureValue}`);
+    setSearchTemperatureValue("");
   };
 
   const handleSort = (e) => {
@@ -82,11 +88,20 @@ function Home() {
   return (
     <>
       <Header/>
-      <Form onSubmit={handleSearch} className="mt-4 mb-1">
-        <Form.Group id="search">
-          <Form.Control placeholder="Search" type="text" name="searchValue" value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
+      <Form onSubmit={handleSearchHumidity} className="mt-4 mb-1">
+        <Form.Group id="searchHumidity">
+          <Form.Control placeholder="Search Humidity:" type="text" name="searchHumidityValue" 
+          value={searchHumidityValue} onChange={(e) => setSearchHumidityValue(e.target.value)}/>
         </Form.Group>
       </Form>
+
+      <Form onSubmit={handleSearchTemperature} className="mt-1 mb-1">
+        <Form.Group id="searchTemperature">
+          <Form.Control placeholder="Search Temperature: " type="text" name="searchTemperatureValue" 
+          value={searchTemperatureValue} onChange={(e) => setSearchTemperatureValue(e.target.value)}/>
+        </Form.Group>
+      </Form>
+      
       <div className="mb-5 w-100">
         <select className="d-block w-100 rounded py-1 mb-1" name="colValue" onChange={handleSort}>
           <option>SORT BY</option>
@@ -97,6 +112,7 @@ function Home() {
         <Button variant="outline-secondary" className="mb-1 w-100 fw-bolder fs-6" onClick={() => filterStatus("Inactive")}>Inactive</Button>
         <Button variant="outline-dark" className="w-100 fw-bolder fs-6" onClick={handleReset}>Reset</Button>
       </div>
+      
       <Table striped bordered hover className="bg-light table align-middle">
         <thead className="bg-warning">
           <tr>

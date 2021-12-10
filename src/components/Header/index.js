@@ -5,9 +5,9 @@ import "./style.css";
 
 function Header() {
 
-    const [activeTab, setActiveTab] = useState("Home");
-
     const location = useLocation();
+
+    const [activeTab, setActiveTab] = useState("Home");
 
     const handleActive = (tab) => {
         setActiveTab(tab);
@@ -20,8 +20,11 @@ function Header() {
         else if (location.pathname === '/add') {
             setActiveTab('Add');
         }
-        else if (location.pathname === '/profile') {
+        else if (location.pathname === '/profile' || location.pathname === '/update-profile' || location.pathname === '/update-account') {
             setActiveTab('Profile');
+        }
+        else if (location.pathname === '/chart') {
+            setActiveTab('Chart');
         }
     }, [location])
 
@@ -43,6 +46,11 @@ function Header() {
                         <Link to="/add" className="mx-5 text-uppercase text-white text-decoration-none fs-6">
                             <p className={activeTab === "Add" ? "active p-2" : "p-2"} onClick={() => handleActive("Add")}>
                                 Add
+                            </p>
+                        </Link>
+                        <Link to="/chart" className="mx-5 text-uppercase text-white text-decoration-none fs-6">
+                            <p className={activeTab === "Chart" ? "active p-2" : "p-2"} onClick={() => handleActive("Chart")}>
+                                Chart
                             </p>
                         </Link>
                         <Link to="/profile" className="mx-5 text-uppercase text-white text-decoration-none fs-6">

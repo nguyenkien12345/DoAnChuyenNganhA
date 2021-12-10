@@ -6,9 +6,9 @@ import Header from '../Header';
 
 function Profile() {
 
-    const {handleLogOut,currentUser} = useAuthContext();
-
     const history = useHistory();
+
+    const {handleLogOut,currentUser} = useAuthContext();
 
     const [error, setError] = useState('');
 
@@ -33,6 +33,7 @@ function Profile() {
                     {error && <Alert variant='danger'>{error}</Alert>}
                     <Card.Text className='fs-5'><strong>Email:</strong> {currentUser.email}</Card.Text>
                     <Link to='/update-profile' className='btn btn-success w-100 mb-1 mt-3 fs-5 fw-bold'>Update Profile</Link>
+                    <Link to='/update-account' className='btn btn-success w-100 mb-1 mt-3 fs-5 fw-bold'>Update Account</Link>
                 </Card.Body>
             </Card>
             <div className="w-100 text-center mt-2">

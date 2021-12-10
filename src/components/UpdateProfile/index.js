@@ -1,60 +1,97 @@
-import React, { useRef, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Alert, Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useAuthContext } from "../../contexts/AuthContextProvider";
+import firebase from "../../firebase/firebase";
 import Header from '../Header';
 
 function UpdateProfile() {
   
   const history = useHistory();
 
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const confirmPasswordRef = useRef();
+  const { currentUser } = useAuthContext();
 
-  const { currentUser, updatePassword, updateEmail } = useAuthContext();
-
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message,setMessage] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const initialState = {
+  //   name: '',
+  //   gender: '',
+  //   age: 0,
+  //   address: '',
+  //   phone: 0,
+  //   username: ''
+  // }
+  // const {name, age, address, phone, gender, username} = user;
 
-    if (passwordRef.current.value !== confirmPasswordRef.current.value) {
-        setError('Password and Confirm password does not match. Please try again!');
-        return;
-    }
+  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState({});
 
-    const promises = [];
-    setLoading(true);
-    setError('');
-    setMessage('');
+  useEffect(() => {
+    const findUser = currentUser.email.split('@gmail.com')[0];
+    firebase.database().ref().child(`FirebaseIOT/${findUser}`).get().then((snapshot) => {
+      if(snapshot.exists()){
+          setUser({...snapshot.val()});
+      }
+      else{
+          setUser({});
+      }
+  })
+  }, []);
 
-    const email = emailRef.current.value;
-    const password = passwordRef.current.value
+  const handleChangeValue = (event) => {
+    const {name,value} = event.target;
+    setUser({...user, [name]:value});
+};
 
-    // Nếu email nhập vào # email user thì cập nhật email
-    if (email !== currentUser.email) {
-      promises.push(updateEmail(email));
-    }
-    // Nếu password nhập vào # password user thì cập nhật password. Nếu không nhập thì giữ nguyên password, không đổi
-    if (password) {
-      promises.push(updatePassword(password));
-    }
-
-    Promise.all(promises)
-      .then(() => {
-        setMessage('Update Profile Success')
-        history.push("/");
-      })
-      .catch(() => {
-        setError("Failed to update profile! Please try again!");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
+//   const handleAdd = (event) => {
+//     event.preventDefault();
+//     if(name === "" || name === null){
+//         toast.error("Please Enter Your Name. Do not leave it blank");  
+//         return;       
+//     }
+//     else if(gender === "" || gender === null){
+//       toast.error("Please Select Your Gender");       
+//       return;       
+//     }
+//     else if(age === "" || age === null){
+//         toast.error("Please Enter Your Age. Do not leave it blank");   
+//         return;       
+//     }
+//     else if(address === "" || address === null){
+//         toast.error("Please Enter Your Address. Do not leave it blank");       
+//         return;       
+//     }
+//     else if(phone === "" || phone === null){
+//       toast.error("Please Enter Your Phone. Do not leave it blank");       
+//       return;       
+//     }
+//     else if(username === "" || username === null){
+//       toast.error("Please Enter Your Username. Do not leave it blank");       
+//       return;       
+//     }
+//     else {
+//         setLoading(true);
+//         const data = {
+//           Name: name,
+//           Username: username,
+//           Gender: gender,
+//           Age: parseInt(age),
+//           Address: address,
+//           Phone: parseInt(phone)
+//         }
+//         firebase.database().ref().child("Users/"+username).push(data, (err) => {
+//             if(err) {
+//                 toast.error(err);
+//             }
+//             else{
+//                 toast.success("Updated SuccessFully");
+//             }
+//         })
+//     }
+//     setTimeout(() => history.push('/home'),500);
+//     setLoading(false);
+// }
 
   return (
     <>
@@ -63,31 +100,120 @@ function UpdateProfile() {
         <Card.Img className="my-3" variant="top" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2OZBpsoyZf15IqL8qnln5oWAQDsIMPwP_rA&usqp=CAU" height="250px"/>
         <Card.Body>
           <Card.Title className="text-center alert alert-dark fw-bolder mb-4 fs-3">Update Profile</Card.Title>
-          {error && <Alert variant="danger">{error}</Alert>}
-          {message && <Alert variant="success">{message}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group id="email" className="mb-3" as={Row}>
-              <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Email</Form.Label>
-              <Col sm="10">
-                <Form.Control type="email" ref={emailRef} required defaultValue={currentUser.email}/>
-              </Col>
-            </Form.Group>
+           {user === null ? 
+           (
+            <Form>
+              <Form.Group id="name" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Name</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="text" name="name" 
+                  value={user.Name} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
 
-            <Form.Group id="password" className="mb-3" as={Row}>
-              <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Password</Form.Label>
-              <Col sm="10">
-                <Form.Control type="password" ref={passwordRef} placeholder="Leave blank to keep the same"/>
-              </Col>
-            </Form.Group>
+              <Form.Group id="username" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Username</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="text" name="username" 
+                  value={user.Username} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
 
-            <Form.Group id="confirmPassword" className="mb-3" as={Row}>
-              <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Confirm Password</Form.Label>
-              <Col sm="10">
-                <Form.Control type="password" ref={confirmPasswordRef} placeholder="Leave blank to keep the same"/>
-              </Col>
-            </Form.Group>
-            <Button disabled={loading} variant="success" className="w-100 mt-3 mb-1 fs-5 fw-bold" type="submit">Update</Button>
+              <Form.Group id='gender' className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Gender</Form.Label>
+                <Col sm="10">
+                    <select name="gender"  value={user.Gender} onChange={handleChangeValue} className="w-100 h-100">
+                      <option>Gender</option>
+                      <option value="Nam">Nam</option>
+                      <option value="Nữ">Nữ</option>
+                    </select>
+                </Col>
+              </Form.Group>
+
+              <Form.Group id="age" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Age</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="number" name="age" 
+                  value={user.Age} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
+
+              <Form.Group id="address" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Address</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="text" name="address" 
+                  value={user.Address} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
+
+              <Form.Group id="phone" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Phone</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="phone" name="phone" 
+                  value={user.Phone} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
+              
+              <Button disabled={loading} variant="success" className="w-100 mt-3 mb-1 fs-5 fw-bold" type="submit">Update</Button>
           </Form>
+           ) :
+           (
+            <Form>
+              <Form.Group id="name" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Name</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="text" name="name" 
+                  value={user.Name} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
+
+              <Form.Group id="username" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Username</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="text" name="username" 
+                  value={user.Username} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
+
+              <Form.Group id='gender' className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Gender</Form.Label>
+                <Col sm="10">
+                    <select name="gender"  value={user.Gender} onChange={handleChangeValue} className="w-100 h-100">
+                      <option>Gender</option>
+                      <option value="Nam">Nam</option>
+                      <option value="Nữ">Nữ</option>
+                    </select>
+                </Col>
+              </Form.Group>
+
+              <Form.Group id="age" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Age</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="number" name="age" 
+                  value={user.Age} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
+
+              <Form.Group id="address" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Address</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="text" name="address" 
+                  value={user.Address} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
+
+              <Form.Group id="phone" className="mb-3" as={Row}>
+                <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Phone</Form.Label>
+                <Col sm="10">
+                  <Form.Control type="phone" name="phone" 
+                  value={user.Phone} onChange={handleChangeValue} required/>
+                </Col>
+              </Form.Group>
+              
+              <Button disabled={loading} variant="success" className="w-100 mt-3 mb-1 fs-5 fw-bold" type="submit">Update</Button>
+          </Form>
+           )
+          }
         </Card.Body>
       </Card>
       <div className="w-100 text-center mt-3 fs-5"><Link to="/">Cancel</Link></div>

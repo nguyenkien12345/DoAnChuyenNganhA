@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import firebase from "../../firebase/firebase";
+import dateformat from 'dateformat';
 
 function Search() {
   const location = useLocation();
@@ -13,10 +14,21 @@ function Search() {
   };
 
   let query = useQuery();
-  let search = parseFloat(query.get("humidity"));
+  
+  let searchHumidity    = parseFloat(query.get("humidity"));
+  let searchTemperature = parseFloat(query.get("temperature"));
 
-  const searchData = () => {
-    firebase.database().ref().child("FirebaseIOT").orderByChild("Humidity").equalTo(search).on("value", (snapshot) => {
+  const searchHumidityData = () => {
+    firebase.database().ref().child("FirebaseIOT").orderByChild("Humidity").equalTo(searchHumidity).on("value", (snapshot) => {
+        if (snapshot.val()) {
+          const data = snapshot.val();
+          setData(data);
+        }
+      });
+  };
+
+  const searchTemperatureData = () => {
+    firebase.database().ref().child("FirebaseIOT").orderByChild("Temperature").equalTo(searchTemperature).on("value", (snapshot) => {
         if (snapshot.val()) {
           const data = snapshot.val();
           setData(data);
@@ -25,14 +37,19 @@ function Search() {
   };
 
   useEffect(() => {
-    searchData();
-  }, [search]);
+    if(searchHumidity !== null && searchHumidity !== ""){
+      searchHumidityData();
+    }
+    else if(searchTemperature !== null && searchTemperature !== ""){
+      searchTemperatureData();
+    }
+  }, [searchHumidity,searchTemperature]);
 
   return (
     <>
       {Object.keys(data).length === 0 ? (
         <h2 className="text-center fw-bold fs-4 alert alert-danger shadow-sm p-3 bg-light rounded">
-          NO SEARCH FOUND WITH THAT HUMIDITY: {query.get("humidity")}
+          NO SEARCH FOUND
         </h2>
       ) : (
         <Table striped bordered hover className="bg-light table align-middle table-responsive">
@@ -54,7 +71,7 @@ function Search() {
                 <td>{data[id].Temperature}</td>
                 <td>{data[id].Humidity}</td>
                 <td>{data[id].Status}</td>
-                <td>{data[id].Date}</td>
+                <td>{dateformat(data[id].Date,'yyyy-mm-dd')}</td>
                 <td>{data[id].Time}</td>
               </tr>
             ))}

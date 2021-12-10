@@ -3,6 +3,7 @@ import { Button, Card, ListGroup, Badge } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
 import firebase from '../../firebase/firebase';
 import Header from '../Header';
+import dateformat from 'dateformat';
 
 function Detail() {
 
@@ -35,7 +36,7 @@ function Detail() {
                         <strong className="fw-bolder">Humidity:</strong> {data.Humidity}
                     </ListGroup.Item>
                     <ListGroup.Item variant="light" className="my-1 fs-5 text-start">
-                        <strong className="fw-bolder">Date:</strong> {data.Date}
+                        <strong className="fw-bolder">Date:</strong> {dateformat(data.Date, 'yyyy-mm-dd')}
                     </ListGroup.Item>
                     <ListGroup.Item variant="dark" className="my-1 fs-5 text-start">
                         <strong className="fw-bolder">Time:</strong> {data.Time}

@@ -38,7 +38,7 @@ function Add() {
             return;       
         }
         else if(status === "" || status === null){
-            toast.error("Please Enter Your Status. Do not leave it blank");       
+            toast.error("Please Select Your Status");       
             return;       
         }
         else {
