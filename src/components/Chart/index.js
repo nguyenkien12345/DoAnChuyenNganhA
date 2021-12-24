@@ -4,6 +4,7 @@ import { Line, Bar } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import firebase from "../../firebase/firebase";
 import Chart from 'chart.js/auto';
+import Header from '../Header';
 
 function ChartData() {
 
@@ -17,14 +18,13 @@ function ChartData() {
         firebase.database().ref().child("FirebaseIOT").on("value", (snapshot) => {
             if (snapshot.val() !== null) {
               setDataFirebase({ ...snapshot.val() });
+              // eslint-disable-next-line no-lone-blocks
               {Object.keys(dataFirebase)?.map((id) => {
                 arrTemp.push(parseFloat(dataFirebase[id].Temperature))
                 arrHum.push(parseFloat(dataFirebase[id].Humidity))
               })}
               setTemperatures(arrTemp);
               setHumidities(arrHum);
-              console.log(arrTemp);
-              console.log(arrHum);
             } else {
               setDataFirebase({});
             }
@@ -32,7 +32,7 @@ function ChartData() {
         return () => {
             setDataFirebase({});
         };
-      }, []);
+      }, [dataFirebase]);
 
       const data = {
         labels: temperatures,
@@ -45,6 +45,8 @@ function ChartData() {
         };
 
     return (
+          <>
+            <Header/>
             <Container className={'bg-light'}>
                 <Row className={'my-5'}>
                     <h3 className={'text-center alert alert-dark fw-bolder mb-4 fs-3'}>LINE CHART</h3>
@@ -59,6 +61,7 @@ function ChartData() {
                     <Link to='/home'><Button className='mb-3 fs5 fw-bold w-100' variant="success">Go Home</Button></Link>
                 </div>
             </Container>
+          </>
     )
 }
 

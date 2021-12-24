@@ -32,7 +32,6 @@ function Profile() {
                     <Card.Title className='text-center alert alert-dark fs-3 fw-bolder mb-4'>Profile</Card.Title>
                     {error && <Alert variant='danger'>{error}</Alert>}
                     <Card.Text className='fs-5'><strong>Email:</strong> {currentUser.email}</Card.Text>
-                    <Link to='/update-profile' className='btn btn-success w-100 mb-1 mt-3 fs-5 fw-bold'>Update Profile</Link>
                     <Link to='/update-account' className='btn btn-success w-100 mb-1 mt-3 fs-5 fw-bold'>Update Account</Link>
                 </Card.Body>
             </Card>

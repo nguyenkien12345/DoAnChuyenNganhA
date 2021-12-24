@@ -1,6 +1,6 @@
 import React from 'react';
+import { Container, Image } from 'react-bootstrap';
 import Header from '../Header';
-import { Container,Image } from 'react-bootstrap';
 
 function Index() {
     return (

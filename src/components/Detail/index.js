@@ -1,9 +1,9 @@
+import dateformat from 'dateformat';
 import React, { useEffect, useState } from 'react';
-import { Button, Card, ListGroup, Badge } from 'react-bootstrap';
+import { Button, Card, ListGroup } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
 import firebase from '../../firebase/firebase';
 import Header from '../Header';
-import dateformat from 'dateformat';
 
 function Detail() {
 

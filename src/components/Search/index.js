@@ -1,8 +1,8 @@
+import dateformat from 'dateformat';
 import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import firebase from "../../firebase/firebase";
-import dateformat from 'dateformat';
 
 function Search() {
   const location = useLocation();
@@ -15,17 +15,7 @@ function Search() {
 
   let query = useQuery();
   
-  let searchHumidity    = parseFloat(query.get("humidity"));
   let searchTemperature = parseFloat(query.get("temperature"));
-
-  const searchHumidityData = () => {
-    firebase.database().ref().child("FirebaseIOT").orderByChild("Humidity").equalTo(searchHumidity).on("value", (snapshot) => {
-        if (snapshot.val()) {
-          const data = snapshot.val();
-          setData(data);
-        }
-      });
-  };
 
   const searchTemperatureData = () => {
     firebase.database().ref().child("FirebaseIOT").orderByChild("Temperature").equalTo(searchTemperature).on("value", (snapshot) => {
@@ -37,13 +27,8 @@ function Search() {
   };
 
   useEffect(() => {
-    if(searchHumidity !== null && searchHumidity !== ""){
-      searchHumidityData();
-    }
-    else if(searchTemperature !== null && searchTemperature !== ""){
       searchTemperatureData();
-    }
-  }, [searchHumidity,searchTemperature]);
+  }, [searchTemperature]);
 
   return (
     <>

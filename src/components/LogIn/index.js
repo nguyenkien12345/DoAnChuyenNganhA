@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Button, Card, Form, Alert, Row, Col } from 'react-bootstrap';
-import { useAuthContext } from '../../contexts/AuthContextProvider';
+import { Alert, Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
+import { useAuthContext } from '../../contexts/AuthContextProvider';
 
 function Login() {
 
@@ -17,6 +17,22 @@ function Login() {
 
     const onHandleSubmit = async(e) => {
         e.preventDefault();
+        if(emailRef.current.value === null || emailRef.current.value === ""){
+            setError('Please enter your email');
+            return;
+        }
+        else if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailRef.current.value))){
+            setError('Wrong email format');
+            return;
+        }
+        else if(passwordRef.current.value === null || passwordRef.current.value === ""){
+            setError('Please enter your password');
+            return;
+        }
+        else if(passwordRef.current.value.length < 6 || passwordRef.current.value.length > 64){
+            setError('Minimum password length is 6 and Maximum password length is 64');
+            return;
+        }
         try {
                 setError('');
                 setLoading(true); 
@@ -38,7 +54,7 @@ function Login() {
                 <Card.Body>
                     <Card.Title className='text-center alert alert-dark fw-bolder mb-4 fs-3'>Log In</Card.Title>
                     {error && <Alert variant='danger'>{error}</Alert>}
-                    <Form onSubmit={onHandleSubmit}>
+                    <Form onSubmit={onHandleSubmit} noValidate>
                         <Form.Group id='email' className="mb-3" as={Row}>
                             <Form.Label column sm="2" className="text-start text-uppercase fw-bolder">Email</Form.Label>
                             <Col sm="10">

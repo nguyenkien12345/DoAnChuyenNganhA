@@ -12,7 +12,6 @@ function Home() {
 
   const [data, setData] = useState({});
 
-  const [searchHumidityValue, setSearchHumidityValue] = useState("");
   const [searchTemperatureValue, setSearchTemperatureValue] = useState("");
   const [sortedData, setSortedData] = useState([]);
   const [sort, setSort] = useState(false);
@@ -29,12 +28,6 @@ function Home() {
       setData({});
     };
   }, []);
-
-  const handleSearchHumidity = (e) => {
-    e.preventDefault();
-    history.push(`/search?humidity=${searchHumidityValue}`);
-    setSearchHumidityValue("");
-  };
 
   const handleSearchTemperature = (e) => {
     e.preventDefault();
@@ -88,13 +81,6 @@ function Home() {
   return (
     <>
       <Header/>
-      <Form onSubmit={handleSearchHumidity} className="mt-4 mb-1">
-        <Form.Group id="searchHumidity">
-          <Form.Control placeholder="Search Humidity:" type="text" name="searchHumidityValue" 
-          value={searchHumidityValue} onChange={(e) => setSearchHumidityValue(e.target.value)}/>
-        </Form.Group>
-      </Form>
-
       <Form onSubmit={handleSearchTemperature} className="mt-1 mb-1">
         <Form.Group id="searchTemperature">
           <Form.Control placeholder="Search Temperature: " type="text" name="searchTemperatureValue" 
@@ -108,8 +94,10 @@ function Home() {
           <option value="Humidity">Humidity</option>
           <option value="Temperature">Temperature</option>
         </select>
-        <Button variant="outline-primary" className="mb-1 w-100 fw-bolder fs-6" onClick={() => filterStatus("Active")}>Active</Button>
-        <Button variant="outline-secondary" className="mb-1 w-100 fw-bolder fs-6" onClick={() => filterStatus("Inactive")}>Inactive</Button>
+        <Button variant="outline-primary" className="mb-1 w-100 fw-bolder fs-6" 
+        onClick={() => filterStatus("Active")}>Active</Button>
+        <Button variant="outline-secondary" className="mb-1 w-100 fw-bolder fs-6" 
+        onClick={() => filterStatus("Inactive")}>Inactive</Button>
         <Button variant="outline-dark" className="w-100 fw-bolder fs-6" onClick={handleReset}>Reset</Button>
       </div>
       
